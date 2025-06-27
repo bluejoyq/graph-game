@@ -1,0 +1,63 @@
+# Graph Game Project Rules
+
+## 파일 명명 규칙
+- 모든 파일명은 kebab-case를 사용합니다 (예: stock-game.tsx, csv-parser.ts)
+- 컴포넌트 파일: `component-name.tsx`
+- 유틸리티 파일: `utility-name.ts`
+- 훅 파일: `use-hook-name.ts`
+- 타입 파일: `game.ts`
+- 스타일 파일: `component-name.css.ts` (Emotion 스타일 객체)
+
+## 코드 스타일
+- 항상 세미콜론 사용
+- 싱글 쿼트 사용
+- 2칸 들여쓰기
+- 100자 줄 길이 제한
+- import 구문 자동 정리
+
+## 컴포넌트 규칙
+- 함수형 컴포넌트 사용
+- React hooks 활용
+- Props 타입은 interface로 정의
+- 컴포넌트명은 PascalCase
+
+## 폴더 구조
+```
+src/
+  components/     # React 컴포넌트
+  hooks/         # 커스텀 훅
+  utils/         # 유틸리티 함수
+  models/         # 타입 정의
+```
+
+
+
+## TypeScript 규칙
+- 엄격한 타입 검사
+- any 타입 사용 금지 (경고)
+- import type 사용 권장
+- 명시적 타입 정의
+
+## Git 규칙
+- 커밋 메시지는 한국어 가능
+- feat, fix, docs, style, refactor, test 접두사 사용
+
+## 라이브러리 사용
+- 차트: recharts
+- 아이콘: lucide-react
+- 스타일: @emotion/react (CSS-in-JS, css object 스타일)
+- 색상 팔레트: @radix-ui/colors
+- 상태 관리: React useState/useReducer
+
+## 스타일링 규칙
+- @emotion/react 사용
+- css object 스타일 사용 (css`` 템플릿 리터럴 금지)
+- styled components보다 css prop 우선 사용
+- 스타일 파일 분리: `component-name.css.ts`로 스타일 객체 export
+- 색상은 @radix-ui/colors 라이브러리 사용 (colors.blue.blue9 형태)
+- 반응형 디자인 고려
+
+## 성능 고려사항
+- useMemo, useCallback 적절히 사용
+- 컴포넌트 재렌더링 최소화
+- 대용량 데이터 처리 시 가상화 고려 
