@@ -34,12 +34,44 @@ export const gameStyles = {
   gameHeader: css({
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     gap: '12px',
     padding: '8px 16px',
     backgroundColor: colors.gray.gray3,
     borderRadius: '8px',
     flexShrink: 0,
+  }),
+
+  // 타이머 시스템
+  timer: css({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: '2px',
+  }),
+
+  timerLabel: css({
+    fontSize: '0.625rem',
+    color: colors.gray.gray11,
+    fontWeight: '500',
+  }),
+
+  timerValue: css({
+    fontSize: '1.125rem',
+    fontWeight: 'bold',
+    fontFamily: 'monospace',
+  }),
+
+  timerNormal: css({
+    color: colors.green.green11,
+  }),
+
+  timerWarning: css({
+    color: colors.yellow.yellow11,
+  }),
+
+  timerDanger: css({
+    color: colors.red.red11,
   }),
 
   drawerToggleButton: css({
@@ -60,6 +92,71 @@ export const gameStyles = {
     fontWeight: '600',
     color: colors.violet.violet11,
     marginRight: 'auto',
+  }),
+
+  // 뉴스 시스템
+  newsPreview: css({
+    position: 'fixed',
+    top: '20px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 1000,
+    backgroundColor: colors.orange.orange9,
+    color: 'white',
+    padding: '8px 16px',
+    borderRadius: '6px',
+    fontSize: '0.875rem',
+    fontWeight: '600',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
+    animation: 'pulse 1s ease-in-out infinite alternate',
+  }),
+
+  newsPopup: css({
+    position: 'fixed',
+    top: '60px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    zIndex: 1000,
+    maxWidth: '600px',
+    width: '90%',
+    animation: 'slideDown 0.3s ease-out',
+  }),
+
+  newsContent: css({
+    padding: '16px 20px',
+    borderRadius: '8px',
+    fontSize: '1rem',
+    fontWeight: '600',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)',
+    border: '2px solid',
+  }),
+
+  newsPositive: css({
+    backgroundColor: colors.green.green3,
+    borderColor: colors.green.green8,
+    color: colors.green.green12,
+  }),
+
+  newsNegative: css({
+    backgroundColor: colors.red.red3,
+    borderColor: colors.red.red8,
+    color: colors.red.red12,
+  }),
+
+  newsIcon: css({
+    fontSize: '1.5rem',
+    flexShrink: 0,
+  }),
+
+  newsTitle: css({
+    flex: 1,
+    lineHeight: '1.4',
   }),
 
   // 상태 카드 그리드 (4개)
@@ -154,10 +251,10 @@ export const gameStyles = {
     minHeight: 0,
   }),
 
-  // 거래 버튼 (4개)
+  // 거래 버튼 (6개)
   tradingButtons: css({
     display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    gridTemplateColumns: 'repeat(6, 1fr)',
     gap: '8px',
     flexShrink: 0,
   }),
@@ -178,11 +275,11 @@ export const gameStyles = {
     },
   }),
 
-  buyButton: css({
-    backgroundColor: colors.green.green9,
+  buyButton25: css({
+    backgroundColor: colors.green.green7,
     color: 'white',
     '&:hover:not(:disabled)': {
-      backgroundColor: colors.green.green10,
+      backgroundColor: colors.green.green8,
       transform: 'translateY(-1px)',
     },
   }),
@@ -192,6 +289,24 @@ export const gameStyles = {
     color: 'white',
     '&:hover:not(:disabled)': {
       backgroundColor: colors.green.green9,
+      transform: 'translateY(-1px)',
+    },
+  }),
+
+  buyButton: css({
+    backgroundColor: colors.green.green9,
+    color: 'white',
+    '&:hover:not(:disabled)': {
+      backgroundColor: colors.green.green10,
+      transform: 'translateY(-1px)',
+    },
+  }),
+
+  sellButton25: css({
+    backgroundColor: colors.red.red7,
+    color: 'white',
+    '&:hover:not(:disabled)': {
+      backgroundColor: colors.red.red8,
       transform: 'translateY(-1px)',
     },
   }),
@@ -397,6 +512,47 @@ export const gameStyles = {
     fontSize: '1.25rem',
     fontWeight: 'bold',
     color: colors.gray.gray12,
+  }),
+
+  // 뉴스 탭
+  newsTab: css({
+    padding: '16px',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  }),
+
+  newsList: css({
+    flex: 1,
+    overflow: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px',
+  }),
+
+  newsHistoryItem: css({
+    padding: '12px',
+    backgroundColor: 'white',
+    borderRadius: '6px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+  }),
+
+  newsHistoryTitle: css({
+    flex: 1,
+    fontSize: '0.875rem',
+    fontWeight: '500',
+    color: colors.gray.gray12,
+    lineHeight: '1.4',
+  }),
+
+  newsTime: css({
+    fontSize: '0.75rem',
+    color: colors.gray.gray10,
+    fontFamily: 'monospace',
+    fontWeight: '600',
   }),
 
   profitPositive: css({

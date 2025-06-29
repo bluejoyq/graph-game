@@ -1,4 +1,6 @@
 # Graph Game Project Rules
+## 실행하지마
+- 실행하지마
 
 ## 파일 명명 규칙
 - 모든 파일명은 kebab-case를 사용합니다 (예: stock-game.tsx, csv-parser.ts)

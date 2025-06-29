@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 
-import { BarChart3, DollarSign, Menu, TrendingDown, TrendingUp, X } from 'lucide-react';
+import { BarChart3, Bell, DollarSign, Menu, TrendingDown, TrendingUp, X } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import {
   CartesianGrid,
@@ -11,24 +11,35 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import type { GameState, StockData, Transaction } from '../models/game';
-import { formatCurrency, formatDate, parseCSV } from '../utils/csv-parser';
+import type { GameState, News, StockData, Transaction } from '../models/game';
+import {
+  formatCurrency,
+  formatDate,
+  generateGameNews,
+  getCurrentNews,
+  getNewsPreview,
+  parseCSV,
+} from '../utils/csv-parser';
 import { gameStyles as styles } from './stock-game.css';
 
 const INITIAL_CASH = 10000;
 const GAME_SPEED = 500;
-const ROWS_PER_SECOND = 1;
+const GAME_DURATION = 300; // 5분
 
 export const StockGame = () => {
   const [stockData, setStockData] = useState<StockData[]>([]);
+  const [gameNews, setGameNews] = useState<News[]>([]);
   const [gameState, setGameState] = useState<GameState>({
     cash: INITIAL_CASH,
     shares: 0,
     currentPrice: 0,
-    dayIndex: 0,
+    gameTime: 0,
     gameOver: false,
-    totalDays: 0,
+    gameDuration: GAME_DURATION,
     transactions: [],
+    currentNews: null,
+    newsHistory: [],
+    showNewsPreview: false,
   });
   const [loading, setLoading] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -41,11 +52,12 @@ export const StockGame = () => {
     const initGame = async () => {
       try {
         const data = await parseCSV('/TSLA_24h.csv');
+        const news = generateGameNews();
         setStockData(data);
+        setGameNews(news);
         setGameState((prev) => ({
           ...prev,
           currentPrice: data[0]?.open || 0,
-          totalDays: data.length,
         }));
         setLoading(false);
         // 게임 자동 시작
@@ -65,30 +77,61 @@ export const StockGame = () => {
 
     const interval = setInterval(() => {
       setGameState((prev) => {
-        // 매 초마다 ROWS_PER_SECOND 개씩 진행
-        const nextIndex = Math.min(prev.dayIndex + ROWS_PER_SECOND, stockData.length - 1);
-        const isGameOver = nextIndex >= stockData.length - 1;
+        const nextTime = prev.gameTime + gameSpeed / 1000;
+        const isGameOver = nextTime >= GAME_DURATION;
+
+        // 주가 데이터 인덱스 계산 (5분을 전체 데이터에 매핑)
+        const dataIndex = Math.floor((nextTime / GAME_DURATION) * (stockData.length - 1));
+        const currentPrice = stockData[dataIndex]?.close || prev.currentPrice;
+
+        // 뉴스 시스템
+        const currentNews = getCurrentNews(nextTime, gameNews);
+        const newsPreview = getNewsPreview(nextTime, gameNews);
+
+        // 뉴스가 끝났을 때 히스토리에 추가
+        if (prev.currentNews && !currentNews && prev.currentNews !== null) {
+          return {
+            ...prev,
+            gameTime: nextTime,
+            currentPrice,
+            currentNews,
+            showNewsPreview: !!newsPreview,
+            newsHistory: [...prev.newsHistory, prev.currentNews],
+            gameOver: isGameOver,
+          };
+        }
 
         return {
           ...prev,
-          dayIndex: nextIndex,
-          currentPrice: stockData[nextIndex]?.close || prev.currentPrice,
+          gameTime: nextTime,
+          currentPrice,
+          currentNews,
+          showNewsPreview: !!newsPreview,
           gameOver: isGameOver,
         };
       });
     }, gameSpeed);
 
     return () => clearInterval(interval);
-  }, [isPlaying, gameState.gameOver, loading, stockData, gameSpeed]);
+  }, [isPlaying, gameState.gameOver, loading, stockData, gameNews, gameSpeed]);
 
   // 차트용 데이터
   const chartData = useMemo(() => {
-    return stockData.slice(0, gameState.dayIndex + 1).map((data, index) => ({
+    const currentDataCount = Math.floor((gameState.gameTime / GAME_DURATION) * stockData.length);
+    return stockData.slice(0, currentDataCount + 1).map((data, index) => ({
       day: index + 1,
       price: data.close,
       date: formatDate(data.date),
     }));
-  }, [stockData, gameState.dayIndex]);
+  }, [stockData, gameState.gameTime]);
+
+  // 시간 포맷 (MM:SS)
+  const formatTime = (seconds: number): string => {
+    const remainingTime = Math.max(0, GAME_DURATION - seconds);
+    const minutes = Math.floor(remainingTime / 60);
+    const secs = Math.floor(remainingTime % 60);
+    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   // 드로워 토글
   const toggleDrawer = () => {
@@ -107,7 +150,9 @@ export const StockGame = () => {
         type: 'buy',
         price: gameState.currentPrice,
         shares: maxShares,
-        date: stockData[gameState.dayIndex]?.date || '',
+        date:
+          stockData[Math.floor((gameState.gameTime / GAME_DURATION) * (stockData.length - 1))]
+            ?.date || '',
       };
 
       setGameState((prev) => ({
@@ -137,7 +182,9 @@ export const StockGame = () => {
         type: 'sell',
         price: gameState.currentPrice,
         shares: sharesToSell,
-        date: stockData[gameState.dayIndex]?.date || '',
+        date:
+          stockData[Math.floor((gameState.gameTime / GAME_DURATION) * (stockData.length - 1))]
+            ?.date || '',
         profit,
       };
 
@@ -184,8 +231,52 @@ export const StockGame = () => {
 
   return (
     <div css={styles.container}>
+      {/* 뉴스 예고 팝업 */}
+      {gameState.showNewsPreview && (
+        <div css={styles.newsPreview}>
+          <Bell size={16} />
+          <span>속보 예고</span>
+        </div>
+      )}
+
+      {/* 뉴스 팝업 */}
+      {gameState.currentNews && (
+        <div css={styles.newsPopup}>
+          <div
+            css={[
+              styles.newsContent,
+              gameState.currentNews.impact === 'positive'
+                ? styles.newsPositive
+                : styles.newsNegative,
+            ]}
+          >
+            <span css={styles.newsIcon}>
+              {gameState.currentNews.impact === 'positive' ? '📈' : '📉'}
+            </span>
+            <span css={styles.newsTitle}>{gameState.currentNews.title}</span>
+          </div>
+        </div>
+      )}
+
       {/* 게임 헤더 */}
       <div css={styles.gameHeader}>
+        {/* 타이머 */}
+        <div css={styles.timer}>
+          <span css={styles.timerLabel}>남은 시간</span>
+          <span
+            css={[
+              styles.timerValue,
+              gameState.gameTime > GAME_DURATION * 0.8
+                ? styles.timerDanger
+                : gameState.gameTime > GAME_DURATION * 0.6
+                  ? styles.timerWarning
+                  : styles.timerNormal,
+            ]}
+          >
+            {formatTime(gameState.gameTime)}
+          </span>
+        </div>
+
         {gameState.gameOver && <div css={styles.gameOverText}>🎉 게임 종료!</div>}
 
         {/* 드로워 토글 버튼 */}
@@ -282,11 +373,11 @@ export const StockGame = () => {
         <div css={styles.tradingButtons}>
           <button
             type="button"
-            css={[styles.button, styles.buyButton]}
-            onClick={() => buyStock(1.0)}
+            css={[styles.button, styles.buyButton25]}
+            onClick={() => buyStock(0.25)}
             disabled={gameState.gameOver || gameState.cash < gameState.currentPrice}
           >
-            100% 사기
+            25% 사기
           </button>
           <button
             type="button"
@@ -295,6 +386,22 @@ export const StockGame = () => {
             disabled={gameState.gameOver || gameState.cash < gameState.currentPrice}
           >
             50% 사기
+          </button>
+          <button
+            type="button"
+            css={[styles.button, styles.buyButton]}
+            onClick={() => buyStock(1.0)}
+            disabled={gameState.gameOver || gameState.cash < gameState.currentPrice}
+          >
+            100% 사기
+          </button>
+          <button
+            type="button"
+            css={[styles.button, styles.sellButton25]}
+            onClick={() => sellStock(0.25)}
+            disabled={gameState.gameOver || gameState.shares === 0}
+          >
+            25% 팔기
           </button>
           <button
             type="button"
@@ -350,6 +457,13 @@ export const StockGame = () => {
             onClick={() => setActiveTab('summary')}
           >
             요약
+          </button>
+          <button
+            type="button"
+            css={[styles.tabButton, activeTab === 'news' && styles.tabButtonActive]}
+            onClick={() => setActiveTab('news')}
+          >
+            뉴스
           </button>
         </div>
 
@@ -425,6 +539,27 @@ export const StockGame = () => {
               <div css={styles.summaryCard}>
                 <h4 css={styles.summaryTitle}>거래 횟수</h4>
                 <div css={styles.summaryValue}>{gameState.transactions.length}회</div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'news' && (
+            <div css={styles.newsTab}>
+              <div css={styles.newsList}>
+                {gameState.newsHistory.length > 0 ? (
+                  gameState.newsHistory.map((news) => (
+                    <div key={news.id} css={styles.newsHistoryItem}>
+                      <span css={styles.newsIcon}>{news.impact === 'positive' ? '📈' : '📉'}</span>
+                      <span css={styles.newsHistoryTitle}>{news.title}</span>
+                      <span css={styles.newsTime}>
+                        {Math.floor(news.triggerTime / 60)}:
+                        {(news.triggerTime % 60).toFixed(0).padStart(2, '0')}
+                      </span>
+                    </div>
+                  ))
+                ) : (
+                  <div css={styles.emptyState}>아직 뉴스가 없습니다.</div>
+                )}
               </div>
             </div>
           )}

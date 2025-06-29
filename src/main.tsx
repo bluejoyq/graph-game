@@ -1,9 +1,12 @@
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { getAnalytics } from 'firebase/analytics';
+import { initializeApp } from 'firebase/app';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
-import { getAnalytics } from 'firebase/analytics';
-import { initializeApp } from 'firebase/app';
-import App from './App.tsx';
+import { routeTree } from './routeTree.gen';
+
+const router = createRouter({ routeTree });
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAgoSF2XaRaY63OE2ikwYneeWcfsXxyNK8',
@@ -18,8 +21,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 getAnalytics(app);
 
+// biome-ignore lint/style/noNonNullAssertion: react
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </StrictMode>,
 );

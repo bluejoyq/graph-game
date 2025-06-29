@@ -5,13 +5,16 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc;
+  background-color: gray;
 }
 
 #root {
   width: 100%;
   max-width: 500px;
   margin: 0 auto;
+  background-color: #f0f0f0;
+  min-height: 100vh;
+  max-height: 100vh;
 }
 
 * {
