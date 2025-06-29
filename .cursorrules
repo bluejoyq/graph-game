@@ -2,6 +2,8 @@
 ## 실행하지마
 - 실행하지마
 
+## 화살표 함수를 선호한다.
+
 ## 파일 명명 규칙
 - 모든 파일명은 kebab-case를 사용합니다 (예: stock-game.tsx, csv-parser.ts)
 - 컴포넌트 파일: `component-name.tsx`

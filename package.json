@@ -20,7 +20,6 @@
     "@tanstack/react-pacer": "^0.8.0",
     "@tanstack/react-router": "^1.122.0",
     "@tanstack/react-router-devtools": "^1.122.0",
-    "@tanstack/store": "^0.7.1",
     "firebase": "^11.9.1",
     "lucide-react": "^0.525.0",
     "react": "^19.1.0",

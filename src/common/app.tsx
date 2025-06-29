@@ -1,5 +1,5 @@
 import { Game } from '../game';
-import { Home } from '../home';
+import { Home } from '../game/_modules/home';
 import { type AppState, initialHomeState } from './models/app-state';
 
 import { useGameLoopState } from './services/use-game-loop';

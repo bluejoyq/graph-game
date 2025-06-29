@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import type { GameState, News, StockData, Transaction } from '../models/game';
+import type { GameState, News, StockData, Transaction } from '../../../../models/game';
 import {
   formatCurrency,
   formatDate,
@@ -19,7 +19,7 @@ import {
   getCurrentNews,
   getNewsPreview,
   parseCSV,
-} from '../utils/csv-parser';
+} from '../../../../utils/csv-parser';
 import { gameStyles as styles } from './stock-game.css';
 
 const INITIAL_CASH = 10000;

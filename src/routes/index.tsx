@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Home } from '@/home';
+import { Home } from '@/game/_modules/home';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
