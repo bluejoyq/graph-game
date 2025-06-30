@@ -1,4 +1,5 @@
-import type { News, StockData } from '../models/game';
+import type { News } from '../game/_model/news';
+import type { StockData } from '../game/_model/stock';
 
 export const parseCSV = async (csvPath: string): Promise<StockData[]> => {
   const response = await fetch(csvPath);
@@ -124,10 +125,13 @@ export function getCurrentNews(currentTime: number, news: News[]): News | null {
   return null;
 }
 
-// 뉴스 예고 확인 (뉴스 시작 1초 전)
+// 뉴스 예고 확인 (뉴스 시작 1초 전 = 4틱 전)
+// 게임 속도가 0.25초마다 틱이므로 1초 = 4틱
 export function getNewsPreview(currentTime: number, news: News[]): News | null {
+  const PREVIEW_TIME = 1.0; // 1초 전(4틱 전)부터 예고 시작
+
   for (const newsItem of news) {
-    if (currentTime >= newsItem.triggerTime - 1 && currentTime < newsItem.triggerTime) {
+    if (currentTime >= newsItem.triggerTime - PREVIEW_TIME && currentTime < newsItem.triggerTime) {
       return newsItem;
     }
   }
