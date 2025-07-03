@@ -1,7 +1,7 @@
 import { Bell } from 'lucide-react';
 import { useGameStore } from '../../../_services/use-game-store';
 
-export const NewsDisplay = () => {
+export const NewsDisplayPopup = () => {
   const { gameState } = useGameStore();
 
   return (

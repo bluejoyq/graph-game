@@ -4,11 +4,7 @@ import { formatCurrency } from '../../../../utils/csv-parser';
 import { GAME_DURATION } from '../../../_model/game-state';
 import { useGameStore } from '../../../_services/use-game-store';
 
-interface GameStatusProps {
-  height?: string | number;
-}
-
-export const GameStatus = ({ height = '100%' }: GameStatusProps) => {
+export const GameStatus = () => {
   const { gameState } = useGameStore();
 
   // 시간 포맷 (MM:SS)
@@ -40,7 +36,6 @@ export const GameStatus = ({ height = '100%' }: GameStatusProps) => {
         padding: 12,
         border: '1px solid #E5E7EB',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        height: height,
         display: 'flex',
         flexDirection: 'column',
       }}

@@ -3,7 +3,6 @@ import {
   CartesianGrid,
   Line,
   LineChart,
-  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -13,11 +12,7 @@ import { formatCurrency, formatDate } from '../../../../utils/csv-parser';
 import { GAME_DURATION } from '../../../_model/game-state';
 import { useGameStore } from '../../../_services/use-game-store';
 
-interface StockChartProps {
-  height?: string | number;
-}
-
-export const StockChart = ({ height = '100%' }: StockChartProps) => {
+export const StockChart = () => {
   const { gameState } = useGameStore();
 
   // 현재 진행 지점 계산
@@ -38,12 +33,6 @@ export const StockChart = ({ height = '100%' }: StockChartProps) => {
     }));
   }, [gameState.stockData, currentDataIndex]);
 
-  // 현재 위치 (윈도우 내에서의 상대적 위치)
-  const currentDayInWindow = useMemo(() => {
-    if (chartData.length === 0) return 0;
-    return chartData[chartData.length - 1]?.day || 0;
-  }, [chartData]);
-
   // 데이터가 없을 때 표시
   if (gameState.stockData.length === 0) {
     return (
@@ -54,7 +43,6 @@ export const StockChart = ({ height = '100%' }: StockChartProps) => {
           padding: 16,
           border: '1px solid #E5E7EB',
           boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-          height: height,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -66,62 +54,37 @@ export const StockChart = ({ height = '100%' }: StockChartProps) => {
   }
 
   return (
-    <div
-      css={{
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        padding: 16,
-        border: '1px solid #E5E7EB',
-        boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        height: height,
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      <div css={{ flex: 1, width: '100%', minHeight: 0, height: '100%' }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-            <XAxis dataKey="day" stroke="#6B7280" tick={{ fontSize: 11, fill: '#6B7280' }} />
-            <YAxis
-              stroke="#6B7280"
-              tick={{ fontSize: 11, fill: '#6B7280' }}
-              tickFormatter={(value) => `${value}`}
-            />
-            <Tooltip
-              labelFormatter={(value) => `Day ${value}`}
-              formatter={(value: number) => [formatCurrency(value), 'Price']}
-              contentStyle={{
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #E5E7EB',
-                borderRadius: '8px',
-                color: '#1F2937',
-                fontSize: '12px',
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              }}
-            />
-            {/* 현재 진행 지점 표시 */}
-            {currentDataIndex < gameState.stockData.length && (
-              <ReferenceLine
-                x={currentDayInWindow}
-                stroke="#EF4444"
-                strokeWidth={2}
-                strokeDasharray="4 4"
-                label={{ value: '현재', position: 'top', fill: '#EF4444' }}
-              />
-            )}
-            <Line
-              type="monotone"
-              dataKey="price"
-              stroke="#3B82F6"
-              strokeWidth={2}
-              dot={false}
-              activeDot={{ r: 3, fill: '#3B82F6' }}
-              isAnimationActive={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={chartData}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+        <XAxis dataKey="day" stroke="#6B7280" tick={{ fontSize: 11, fill: '#6B7280' }} />
+        <YAxis
+          stroke="#6B7280"
+          tick={{ fontSize: 11, fill: '#6B7280' }}
+          tickFormatter={(value) => `${value}`}
+        />
+        <Tooltip
+          labelFormatter={(value) => `Day ${value}`}
+          formatter={(value: number) => [formatCurrency(value), 'Price']}
+          contentStyle={{
+            backgroundColor: '#FFFFFF',
+            border: '1px solid #E5E7EB',
+            borderRadius: '8px',
+            color: '#1F2937',
+            fontSize: '12px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+          }}
+        />
+        <Line
+          type="monotone"
+          dataKey="price"
+          stroke="#3B82F6"
+          strokeWidth={2}
+          dot={false}
+          activeDot={{ r: 3, fill: '#3B82F6' }}
+          isAnimationActive={false}
+        />
+      </LineChart>
+    </ResponsiveContainer>
   );
 };

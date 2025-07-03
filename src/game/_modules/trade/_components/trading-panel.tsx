@@ -1,10 +1,6 @@
 import { useGameStore } from '../../../_services/use-game-store';
 
-interface TradingPanelProps {
-  height?: string | number;
-}
-
-export const TradingPanel = ({ height = '100%' }: TradingPanelProps) => {
+export const TradingPanel = () => {
   const { gameState, buyStock, sellStock } = useGameStore();
 
   const buttonStyle = {
@@ -47,24 +43,10 @@ export const TradingPanel = ({ height = '100%' }: TradingPanelProps) => {
         padding: 12,
         border: '1px solid #E5E7EB',
         boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-        height: height,
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      <h3
-        css={{
-          color: '#1F2937',
-          fontSize: 14,
-          fontWeight: '600',
-          marginBottom: 8,
-          textAlign: 'center',
-          flexShrink: 0,
-        }}
-      >
-        거래
-      </h3>
-
       <div
         css={{
           display: 'grid',

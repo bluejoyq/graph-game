@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useGameStore } from '../../_services/use-game-store';
 import { GameStatus } from './_components/game-status';
-import { NewsDisplay } from './_components/news-display';
+import { NewsDisplayPopup } from './_components/news-display-popup';
 import { StockChart } from './_components/stock-chart';
 import { TradingPanel } from './_components/trading-panel';
 
@@ -28,29 +28,21 @@ export const TradeModule = () => {
   }
 
   return (
-    <div
-      css={{
-        height: '100%',
-        overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: '10px',
-        gap: 8,
-      }}
-    >
-      <NewsDisplay />
-
-      <div css={{ height: '20%' }}>
+    <>
+      <div
+        css={{
+          height: '100vh',
+          overflow: 'hidden',
+          display: 'grid',
+          gridTemplateRows: '100px 1fr 150px',
+          gap: 8,
+        }}
+      >
         <GameStatus />
-      </div>
-
-      <div css={{ height: '60%' }}>
         <StockChart />
-      </div>
-
-      <div css={{ height: '20%' }}>
         <TradingPanel />
       </div>
-    </div>
+      <NewsDisplayPopup />
+    </>
   );
 };
